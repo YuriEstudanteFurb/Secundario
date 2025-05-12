@@ -32,9 +32,9 @@ dados_nascimentos_br <- WDI(country = 'BR',
 
 ```
 
-<center>Nacimento do terceiro Filho</center>
+<center>**Nacimento do terceiro Filho**</center>
 
-O nascimento do terceiro filho tem sido um **indicador demográfico importante** para entender mudanças na estrutura familiar e tendências populacionais ao longo do tempo. Em muitas sociedades, ter um terceiro filho era comum no passado, associado a tradições culturais, suporte econômico e organização familiar
+O nascimento do terceiro filho tem sido um indicador demográfico importante para entender mudanças na estrutura familiar e tendências populacionais ao longo do tempo. Em muitas sociedades, ter um terceiro filho era comum no passado, associado a tradições culturais, suporte econômico e organização familiar
 
 ### Paises com maior indice
 

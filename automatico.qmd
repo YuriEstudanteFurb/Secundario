@@ -1,0 +1,136 @@
+---
+title: "Yuri Corrêa Rocha"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: load-packages # Carregamento de pacotes
+#| include: false # Não inclui o resultado no documento
+
+library(tidyverse)  # Pacote para manipulação de dados e gráficos
+library(WDI)        # Pacote para buscar dados do Banco Mundial
+library(ggplot2)    # Biblioteca de gráficos
+library(viridis)    # Melhor paleta de cores para mapas de calor
+
+
+
+# Dados de nascimentos do terceiro filho (SP.DYN.CBRT.IN.)
+
+# Dados em painel (todos os países)
+dados_nascimentos_painel <- WDI(country = 'all',
+                                indicator = 'SP.DYN.CBRT.IN.')
+
+# Dados de corte transversal (2023)
+dados_nascimentos_2023 <- WDI(country = 'all',
+                               indicator = 'SP.DYN.CBRT.IN.',
+                               start = 2023, end = 2023)
+
+# Dados de série temporal (Brasil)
+dados_nascimentos_br <- WDI(country = 'BR',
+                            indicator = 'SP.DYN.CBRT.IN.')
+
+```
+
+<center>Nacimento do terceiro Filho</center>
+
+Paises com maior indice
+
+```{r}
+#| label: grafico-painel-melhorado
+#| warning: false
+#| echo: false
+
+ggplot(dados_nascimentos_painel, aes(x = year, y = SP.DYN.CBRT.IN., group = country, color = country)) +
+  geom_line(size = 0.8, alpha = 0.6) +  # Linhas mais finas para melhorar visualização
+  scale_color_viridis_d(option = "A") + # Melhor contraste entre países
+  geom_smooth(aes(group = 1), method = "loess", color = "black", size = 1.2, se = FALSE) + # Linha de tendência
+  labs(title = "Nascimentos do Terceiro Filho - Tendências por País",
+       subtitle = "Comparação ao longo dos anos",
+       x = "Ano",
+       y = "Número de Nascimentos",
+       color = "País") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "right",
+        axis.text.x = element_text(angle = 45, hjust = 1)) # Melhorando leitura do eixo X
+
+```
+
+**Mudanças econômicas** – O custo de criação dos filhos aumentou significativamente, levando muitas famílias a optarem por ter menos crianças.
+
+**Urbanização e acesso à educação** – Com o crescimento das cidades e maior acesso à informação, casais passaram a priorizar **estabilidade financeira e desenvolvimento profissional**, resultando em famílias menores.
+
+**Planejamento familiar** – A ampla disponibilidade de **métodos contraceptivos** e uma maior conscientização sobre natalidade possibilitaram **maior controle sobre o número de filhos**.
+
+**Mudanças culturais** – As normas sociais evoluíram, reduzindo a pressão para famílias grandes e valorizando **melhor qualidade de vida** e bem-estar familiar.
+
+```{r}
+#| label: grafico-corte-melhorado
+#| warning: false
+#| echo: false
+
+dados_ordenados <- dados_nascimentos_2023 %>% 
+  filter(!is.na(SP.DYN.CBRT.IN.)) %>%
+  arrange(desc(SP.DYN.CBRT.IN.)) %>%
+  slice_head(n = 10) # Top 10 países
+
+ggplot(dados_ordenados, aes(x = reorder(country, SP.DYN.CBRT.IN.), 
+                            y = SP.DYN.CBRT.IN., 
+                            fill = country)) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_viridis_d(option = "C") +
+  coord_flip() +
+  labs(title = "Nascimentos do Terceiro Filho em 2023 - Top 10 Países",
+       x = "País",
+       y = "Número de Nascimentos") +
+  theme_minimal(base_size = 13)
+
+
+```
+
+## **Relação entre Pobreza e Altas Taxas de Nascimentos**
+
+**Menor acesso à educação** – Em muitos desses países, o acesso à educação, especialmente para mulheres, é limitado. Estudos indicam que quanto maior o nível de escolaridade feminina, menor tende a ser a taxa de fertilidade.
+
+**Falta de acesso a métodos contraceptivos** – A baixa disponibilidade e o conhecimento limitado sobre planejamento familiar contribuem para altas taxas de natalidade, com famílias tendo mais filhos do que inicialmente planejado.
+
+**Dependência econômica da família** – Em sociedades rurais e economicamente vulneráveis, filhos são vistos como uma força de trabalho essencial para sustentar a família, o que incentiva a maior quantidade de nascimentos.
+
+**Infraestrutura e serviços públicos precários** – O acesso a saúde, saneamento básico e emprego está diretamente ligado ao desenvolvimento econômico. Em países com infraestrutura limitada, as taxas de natalidade tendem a ser mais altas.
+
+**Fatores culturais e sociais** – Em algumas regiões, há normas sociais que incentivam famílias grandes, seja por tradição, religião ou valores comunitários, tornando o terceiro filho algo comum.
+
+```{r}
+#| label: grafico-temporal-melhorado
+#| warning: false
+#| echo: false
+
+ggplot(dados_nascimentos_br, aes(x = year, y = SP.DYN.CBRT.IN.)) +
+  geom_line(color = "#1f78b4", size = 1.2) +
+  geom_point(color = "#e31a1c", size = 2) +
+  labs(title = "Nascimentos do Terceiro Filho no Brasil (Série Temporal)",
+       x = "Ano",
+       y = "Número de Nascimentos") +
+  theme_minimal(base_size = 13)
+
+```
+
+### **1. Mudanças Econômicas**
+
+O custo de vida aumentou significativamente nas últimas décadas, tornando mais difícil para as famílias sustentarem três ou mais filhos. Educação, saúde e moradia estão cada vez mais caras, o que leva muitos casais a optarem por menos filhos.
+
+### **2. Urbanização e Modernização**
+
+Com a urbanização, os estilos de vida mudaram. Em cidades grandes, **espaço e recursos são limitados**, o que torna a criação de múltiplos filhos mais desafiadora.
+
+### **3. Aumento da Escolarização e Participação Feminina no Trabalho**
+
+Mulheres passaram a buscar mais educação e carreiras, o que levou ao adiamento da maternidade e à redução no número de filhos.
+
+### **4. Planejamento Familiar e Contracepção**
+
+Com maior acesso a métodos contraceptivos e planejamento familiar, casais conseguem **controlar melhor o número de filhos** e escolher ter menos.
+
+### **5. Mudanças na Cultura e nas Expectativas Sociais**
+
+Ter famílias grandes era mais comum no passado, mas hoje há um **novo modelo de família**, no qual ter menos filhos é visto como uma forma de garantir mais oportunidades para cada criança.
